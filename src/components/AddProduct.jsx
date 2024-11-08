@@ -33,14 +33,6 @@ const AddProduct = () => {
     mutation.mutate(newData);
     // const newData = { ...state, id: crypto.randomUUID().toString() };
     // mutation.mutate(newData);
-    setState({
-      ...state,
-      title: "",
-      description: "",
-      price: 0,
-      rating: 5,
-      thumbnail: "",
-    });
   };
 
   const handleChange = (event) => {
