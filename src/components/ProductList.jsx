@@ -1,18 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useState } from "react";
 
 const retrieveProducts = async ({ queryKey }) => {
-  const response = await axios.get(`http://localhost:3000/${queryKey[0]}`);
+  console.log(queryKey[1].page);
+
+  const response = await axios.get(
+    `http://localhost:3000/products?_page=${queryKey[1].page}&_per_page=3`
+  );
   return response.data;
 };
 
 const ProductList = () => {
+  const [page, setPage] = useState(1);
   const {
     data: products,
     error,
     isLoading,
   } = useQuery({
-    queryKey: ["products"], // cashing key
+    queryKey: ["products", { page }], // cashing key
     queryFn: retrieveProducts, // data fecthing function
   });
 
@@ -22,8 +28,8 @@ const ProductList = () => {
     <div className="flex flex-col justify-center items-center w-3/5">
       <h2 className="text-3xl my-2">Product List</h2>
       <ul className="flex flex-wrap justify-center items-center">
-        {products &&
-          products.map((product) => (
+        {products.data &&
+          products.data.map((product) => (
             <li
               key={product.id}
               className="flex flex-col items-center m-2 border rounded-sm"
@@ -37,18 +43,28 @@ const ProductList = () => {
             </li>
           ))}
       </ul>
-      {/* <div className="flex">
+      <div className="flex">
         {products.prev && (
-          <button className="p-1 mx-1 bg-gray-100 border cursor-pointer rounded-sm">
+          <button
+            onClick={() => setPage(products.prev)}
+            className="p-1 mx-1 bg-gray-100 border cursor-pointer rounded-sm"
+          >
             Prev
           </button>
         )}
         {products.next && (
-          <button className="p-1 mx-1 bg-gray-100 border cursor-pointer rounded-sm">
+          <button
+            onClick={() => setPage(products.next)}
+            className="p-1 mx-1 bg-gray-100 border cursor-pointer rounded-sm"
+          >
             Next
           </button>
         )}
-      </div> */}
+
+        <button className="p-1 mx-1 bg-gray-100 border cursor-pointer rounded-sm">
+          Total pages... {products.pages}
+        </button>
+      </div>
     </div>
   );
 };
